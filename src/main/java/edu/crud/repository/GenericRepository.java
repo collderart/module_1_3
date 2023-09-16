@@ -1,7 +1,7 @@
 package edu.crud.repository;
 
-import java.util.List;
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public interface GenericRepository<T, ID> {
     T getById(@Nonnull ID id);

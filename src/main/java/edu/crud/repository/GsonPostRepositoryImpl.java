@@ -1,11 +1,20 @@
 package edu.crud.repository;
 
+import com.google.gson.Gson;
 import edu.crud.model.PostEntity;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class PostRepositoryImpl implements PostRepository {
+public class GsonPostRepositoryImpl implements PostRepository {
+    private final String JSON_FILE;
+    private final Gson gson;
+
+    public GsonPostRepositoryImpl(String jsonFile, Gson gson) {
+        JSON_FILE = jsonFile;
+        this.gson = gson;
+    }
+
     @Override
     public PostEntity getById(@Nonnull Long aLong) {
         return null;
