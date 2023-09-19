@@ -1,7 +1,9 @@
 package edu.crud.view;
 
-import edu.crud.constants.MenuActions;
+import java.util.List;
 
-public interface CommonView {
-    void operationsMenu(MenuActions type);
+public interface CommonView<T> {
+    void printEntity(T entity);
+
+    void printList(List<T> entities);
 }
