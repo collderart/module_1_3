@@ -1,5 +1,5 @@
 package edu.crud.constants;
 
-public enum RepoType {
+public enum Repository {
    UNDEFINED, WRITER, POST, LABEL
 }

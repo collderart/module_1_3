@@ -2,7 +2,7 @@ package edu.crud.controller;
 
 import edu.crud.constants.MenuActions;
 import edu.crud.constants.PostStatus;
-import edu.crud.constants.RepoType;
+import edu.crud.constants.Repository;
 import edu.crud.model.WriterEntity;
 import edu.crud.repository.WriterRepository;
 
@@ -14,10 +14,8 @@ import static edu.crud.constants.MenuActions.*;
 
 public class WriterControllerImpl implements CommonController {
     private final WriterRepository writerRepository;
-    private final Scanner scanner;
 
-    public WriterControllerImpl(Scanner scanner, WriterRepository writerRepository) {
-        this.scanner = scanner;
+    public WriterControllerImpl(WriterRepository writerRepository) {
         this.writerRepository = writerRepository;
     }
 
@@ -79,10 +77,10 @@ public class WriterControllerImpl implements CommonController {
                         System.out.println("2 - to create Post");
                         System.out.println("3 - to create Label");
                         int selectedEntityType = scanner.nextInt();
-                        if (selectedEntityType < 0 || selectedEntityType > RepoType.values().length) {
+                        if (selectedEntityType < 0 || selectedEntityType > Repository.values().length) {
                             throw new IllegalAccessException();
                         }
-                        createMenu(scanner, RepoType.values()[selectedEntityType]);
+                        createMenu(scanner, Repository.values()[selectedEntityType]);
                     }
                     case GET -> {
                         System.out.println(GET.name() + " selected");
@@ -128,7 +126,7 @@ public class WriterControllerImpl implements CommonController {
 
     }
 
-    private void createMenu(Scanner scanner, RepoType value) {
+    private void createMenu(Scanner scanner, Repository value) {
         switch (value) {
             case UNDEFINED -> {
                 mainMenu(scanner);

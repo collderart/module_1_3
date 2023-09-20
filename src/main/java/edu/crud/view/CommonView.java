@@ -1,9 +1,7 @@
 package edu.crud.view;
 
-import java.util.List;
+import java.util.Scanner;
 
 public interface CommonView<T> {
-    void printEntity(T entity);
-
-    void printList(List<T> entities);
+    void printMenu(Scanner scanner) throws Exception;
 }

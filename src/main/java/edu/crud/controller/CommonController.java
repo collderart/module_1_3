@@ -1,26 +1,25 @@
 package edu.crud.controller;
 
 import com.google.gson.GsonBuilder;
-import edu.crud.constants.RepoType;
-import edu.crud.repository.GsonLabelRepositoryImpl;
-import edu.crud.repository.GsonPostRepositoryImpl;
-import edu.crud.repository.GsonWriterRepositoryImpl;
+import edu.crud.constants.Repository;
+import edu.crud.repository.jsonrepository.GsonLabelRepositoryImpl;
+import edu.crud.repository.jsonrepository.GsonPostRepositoryImpl;
+import edu.crud.repository.jsonrepository.GsonWriterRepositoryImpl;
 
 import java.io.File;
-import java.util.Scanner;
 
 public interface CommonController {
 
-    static CommonController getInstance(RepoType type, File fileForStorage, Scanner scanner) {
+    static <T extends CommonController> T getInstance(Repository type, File fileForStorage) {
         switch (type) {
             case WRITER -> {
-                return new WriterControllerImpl(scanner, new GsonWriterRepositoryImpl(fileForStorage.getAbsolutePath(), new GsonBuilder().setPrettyPrinting().create()));
+                return (T) new WriterControllerImpl(new GsonWriterRepositoryImpl(fileForStorage.getAbsolutePath(), new GsonBuilder().setPrettyPrinting().create()));
             }
             case POST -> {
-                return new PostControllerImpl(scanner, new GsonPostRepositoryImpl(fileForStorage.getAbsolutePath(), new GsonBuilder().setPrettyPrinting().create()));
+                return (T) new PostControllerImpl(new GsonPostRepositoryImpl(fileForStorage.getAbsolutePath(), new GsonBuilder().setPrettyPrinting().create()));
             }
             case LABEL -> {
-                return new LabelControllerImpl(scanner, new GsonLabelRepositoryImpl(fileForStorage.getAbsolutePath(), new GsonBuilder().setPrettyPrinting().create()));
+                return (T) new LabelControllerImpl(new GsonLabelRepositoryImpl(fileForStorage.getAbsolutePath(), new GsonBuilder().setPrettyPrinting().create()));
             }
             default -> throw new IllegalArgumentException("Unknown report type");
         }

@@ -1,7 +1,11 @@
 package edu.crud.service;
 
-import edu.crud.constants.RepoType;
+import edu.crud.constants.Repository;
 import edu.crud.controller.CommonController;
+import edu.crud.view.CommonView;
+import edu.crud.view.LabelView;
+import edu.crud.view.PostView;
+import edu.crud.view.WriterView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,21 +15,21 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 
-import static edu.crud.constants.MenuActions.*;
-import static edu.crud.constants.RepoType.*;
+import static edu.crud.constants.MenuActions.EDIT;
+import static edu.crud.constants.Repository.*;
 
 public class MainService {
-    private final CommonController writerController;
-    private final CommonController postController;
-    private final CommonController labelController;
+    private final CommonView labelView;
+    private final CommonView postView;
+    private final CommonView writerView;
     private final Scanner scanner;
-    static Map<RepoType, File> storageFiles;
+    static Map<Repository, File> storageFiles;
 
-    private MainService(Scanner scanner, CommonController writerController, CommonController postController, CommonController labelController) {
+    public MainService(CommonView labelView, CommonView postView, CommonView writerView, Scanner scanner) {
+        this.labelView = labelView;
+        this.postView = postView;
+        this.writerView = writerView;
         this.scanner = scanner;
-        this.writerController = writerController;
-        this.postController = postController;
-        this.labelController = labelController;
     }
 
     public static MainService getInstance() throws Exception {
@@ -51,10 +55,10 @@ public class MainService {
         });
         Scanner scanner = new Scanner(System.in);
         return new MainService(
-                scanner,
-                CommonController.getInstance(WRITER, storageFiles.get(WRITER), scanner),
-                CommonController.getInstance(POST, storageFiles.get(POST), scanner),
-                CommonController.getInstance(LABEL, storageFiles.get(LABEL), scanner));
+                new LabelView(CommonController.getInstance(LABEL, storageFiles.get(LABEL))),
+                new PostView(CommonController.getInstance(POST, storageFiles.get(POST))),
+                new WriterView(CommonController.getInstance(WRITER, storageFiles.get(WRITER))),
+                scanner);
     }
 
     public void run() {
@@ -62,50 +66,37 @@ public class MainService {
     }
 
     private void mainMenu(Scanner scanner) {
-//        System.out.println(new WriterEntity(-1, "fName", "lName",
-//                List.of(new PostEntity(-1, "some content", LocalDateTime.now(), LocalDateTime.now(),
-//                        List.of(new LabelEntity(-1, "LABEL", PostStatus.ACTIVE)), PostStatus.UNDER_REVIEW)),
-//                PostStatus.ACTIVE));
         System.out.println("Please select what entity you want to work with:");
-        System.out.println(CREATE.ordinal() + " - to create menu");
-        System.out.println(GET.ordinal() + " - to get menu");
-        System.out.println(EDIT.ordinal() + " - to edit menu");
-        System.out.println(DELETE.ordinal() + " - to delete menu");
+        System.out.println(WRITER.ordinal() + " " + WRITER + " menu");
+        System.out.println(POST.ordinal() + " " + POST + " menu");
+        System.out.println(LABEL.ordinal() + " " + LABEL + " menu");
         int selectedMenu;
         while (scanner.hasNext()) {
             try {
                 selectedMenu = scanner.nextInt();
-                if (selectedMenu < 0 || selectedMenu > RepoType.values().length) {
+                if (selectedMenu < 0 || selectedMenu > Repository.values().length) {
                     throw new IllegalAccessException();
                 }
 
-                switch (RepoType.values()[selectedMenu]) {
+                switch (Repository.values()[selectedMenu]) {
                     case UNDEFINED -> {
                         mainMenu(scanner);
                     }
                     case WRITER -> {
                         System.out.println(WRITER.name() + " selected");
-
+                        writerView.printMenu(scanner);
                     }
                     case POST -> {
-                        System.out.println(GET.name() + " selected");
-                        System.out.println("Choose what you want to get:");
-                        System.out.println("1 - to create Writer");
-                        System.out.println("2 - to create Post");
-                        System.out.println("3 - to create Label");
-//                        getMenu(scanner);
+                        System.out.println(POST.name() + " selected");
+                        postView.printMenu(scanner);
                     }
                     case LABEL -> {
-                        System.out.println("Choose what you want to edit:");
-                        System.out.println("1 - to create Writer");
-                        System.out.println("2 - to create Post");
-                        System.out.println("3 - to create Label");
                         System.out.println(EDIT.name() + " selected");
-//                        editMenu(scanner);
+                        labelView.printMenu(scanner);
                     }
                 }
             } catch (Exception e) {
-                System.out.println("Only " + Arrays.stream(RepoType.values()).map(Enum::ordinal).toList() + " numbers are allowed");
+                System.out.println("Only " + Arrays.stream(Repository.values()).map(Enum::ordinal).toList() + " numbers are allowed");
                 scanner.next();
             }
         }

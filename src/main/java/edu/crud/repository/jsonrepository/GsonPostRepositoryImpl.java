@@ -1,17 +1,18 @@
-package edu.crud.repository;
+package edu.crud.repository.jsonrepository;
 
 import com.google.gson.Gson;
 import edu.crud.model.PostEntity;
+import edu.crud.repository.PostRepository;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 public class GsonPostRepositoryImpl implements PostRepository {
-    private final String JSON_FILE;
+    private final String JSON_REPO;
     private final Gson gson;
 
     public GsonPostRepositoryImpl(String jsonFile, Gson gson) {
-        JSON_FILE = jsonFile;
+        JSON_REPO = jsonFile;
         this.gson = gson;
     }
 

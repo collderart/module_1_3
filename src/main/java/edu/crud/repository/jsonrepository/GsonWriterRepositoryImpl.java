@@ -1,8 +1,9 @@
-package edu.crud.repository;
+package edu.crud.repository.jsonrepository;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import edu.crud.model.WriterEntity;
+import edu.crud.repository.WriterRepository;
 import edu.crud.util.LocalDateTimeAdapter;
 
 import javax.annotation.Nonnull;
@@ -13,18 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GsonWriterRepositoryImpl implements WriterRepository {
-    private final String JSON_FILE;
+    private final String JSON_REPO;
     private final Gson gson;
 
     public GsonWriterRepositoryImpl(String jsonFile, Gson gson) {
-        JSON_FILE = jsonFile;
+        JSON_REPO = jsonFile;
         this.gson = gson.newBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
     }
 
 
     @Override
     public WriterEntity getById(@Nonnull Long aLong) {
-        try (FileInputStream fin = new FileInputStream(JSON_FILE)) {
+        try (FileInputStream fin = new FileInputStream(JSON_REPO)) {
 //            fin.read()
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -35,15 +36,13 @@ public class GsonWriterRepositoryImpl implements WriterRepository {
     @Override
     public List<WriterEntity> getAll() {
         List<WriterEntity> entities = null;
-        try (FileReader reader = new FileReader(JSON_FILE)) {
+        try (FileReader reader = new FileReader(JSON_REPO)) {
             Type dtoListType = new TypeToken<List<WriterEntity>>() {
             }.getType();
             entities = gson.fromJson(reader, dtoListType);
             if (entities == null) {
                 entities = new ArrayList<>();
-            }
-//            entities.add(writerEntity);
-//            gson.toJson(writerEntity, writer);
+            };
         } catch (Exception e) {
             System.out.println("Cannot save writer entity ");
             System.out.println(e.getMessage());
@@ -53,15 +52,10 @@ public class GsonWriterRepositoryImpl implements WriterRepository {
 
     @Override
     public WriterEntity save(@Nonnull WriterEntity writerEntity) {
-        try (FileReader reader = new FileReader(JSON_FILE); Writer writer = new FileWriter(JSON_FILE, true)) {
-//            Type dtoListType = new TypeToken<List<WriterEntity>>() {
-//            }.getType();
-//            List<WriterEntity> entities = gson.fromJson(reader, dtoListType);
-//            if (entities == null) {
-//                entities = new ArrayList<>();
-//            }
-//            entities.add(writerEntity);
-            gson.toJson(List.of(writerEntity), writer);
+        try (FileReader reader = new FileReader(JSON_REPO); Writer writer = new FileWriter(JSON_REPO, true)) {
+            List<WriterEntity> entities = getAll();
+            entities.add(writerEntity);
+            gson.toJson(entities, writer);
         } catch (Exception e) {
             System.out.println("Cannot save writer entity ");
             System.out.println(e.getMessage());

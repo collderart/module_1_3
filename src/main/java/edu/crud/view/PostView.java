@@ -1,17 +1,26 @@
 package edu.crud.view;
 
+import edu.crud.controller.CommonController;
 import edu.crud.model.PostEntity;
 
-import java.util.List;
+import java.util.Scanner;
+
+import static edu.crud.constants.MenuActions.*;
+import static edu.crud.constants.MenuActions.DELETE;
 
 public class PostView implements CommonView<PostEntity> {
-    @Override
-    public void printEntity(PostEntity entity) {
-        System.out.println(entity);
+    private final CommonController postController;
+    public PostView(CommonController controller) {
+        this.postController = controller;
     }
 
     @Override
-    public void printList(List<PostEntity> entities) {
-        System.out.println(entities);
+    public void printMenu(Scanner scanner) throws Exception {
+        System.out.println("Select action:");
+        System.out.println(CREATE.ordinal() + " - to create Post");
+        System.out.println(GET.ordinal() + " - to get Post");
+        System.out.println(EDIT.ordinal() + " - to edit Post");
+        System.out.println(DELETE.ordinal() + " - to delete Post");
+        System.out.println(UNDEFINED.ordinal() + " - go back");
     }
 }
