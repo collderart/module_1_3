@@ -17,22 +17,24 @@ public class LabelView implements CommonView<LabelEntity> {
 
     @Override
     public void printMenu(Scanner scanner) throws Exception {
-        System.out.println("Select action:");
-        System.out.println(CREATE.ordinal() + " - to create Label");
-        System.out.println(GET.ordinal() + " - to get Label");
-        System.out.println(EDIT.ordinal() + " - to edit Label");
-        System.out.println(DELETE.ordinal() + " - to delete Label");
-        System.out.println(UNDEFINED.ordinal() + " - go back");
+
         int selectedMenu;
-        while (scanner.hasNext()) {
+        do {
+            System.out.println("Select action:");
+            System.out.println(CREATE.ordinal() + " - to create Label");
+            System.out.println(GET.ordinal() + " - to get Label");
+            System.out.println(EDIT.ordinal() + " - to edit Label");
+            System.out.println(DELETE.ordinal() + " - to delete Label");
+            System.out.println(UNDEFINED.ordinal() + " - go back");
             selectedMenu = scanner.nextInt();
             if (selectedMenu < 0 || selectedMenu > MenuActions.values().length) {
                 throw new IllegalAccessException();
             }
-
+            scanner.nextLine();
             switch (MenuActions.values()[selectedMenu]) {
 
                 case UNDEFINED -> {
+                    return;
                 }
                 case CREATE -> {
                     String labelName;
@@ -41,7 +43,8 @@ public class LabelView implements CommonView<LabelEntity> {
                     labelName = scanner.nextLine();
                     LabelEntity label = labelController.createLabel(labelName);
                     System.out.println("Label created\n" + label);
-                    scanner.next();
+
+                    return;
                 }
                 case GET -> {
                     System.out.println(GET.name() + " selected");
@@ -53,7 +56,7 @@ public class LabelView implements CommonView<LabelEntity> {
                     System.out.println(DELETE.name() + " selected");
                 }
             }
-        }
+        } while (scanner.hasNext());
 
     }
 }

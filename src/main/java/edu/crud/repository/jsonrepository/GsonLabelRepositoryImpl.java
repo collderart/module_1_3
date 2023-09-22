@@ -47,8 +47,8 @@ public class GsonLabelRepositoryImpl implements LabelRepository {
 
     @Override
     public LabelEntity save(@Nonnull LabelEntity labelEntity) {
-        try (FileReader reader = new FileReader(JSON_REPO); Writer writer = new FileWriter(JSON_REPO, true)) {
-            List<LabelEntity> entities = getAll();
+        List<LabelEntity> entities = getAll();
+        try (Writer writer = new FileWriter(JSON_REPO, false)) {
             entities.add(labelEntity);
             gson.toJson(entities, writer);
         } catch (Exception e) {

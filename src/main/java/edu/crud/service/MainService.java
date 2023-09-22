@@ -66,21 +66,22 @@ public class MainService {
     }
 
     private void mainMenu(Scanner scanner) {
-        System.out.println("Please select what entity you want to work with:");
-        System.out.println(WRITER.ordinal() + " " + WRITER + " menu");
-        System.out.println(POST.ordinal() + " " + POST + " menu");
-        System.out.println(LABEL.ordinal() + " " + LABEL + " menu");
+
         int selectedMenu;
-        while (scanner.hasNext()) {
+        do {
+            System.out.println("Please select what entity you want to work with:");
+            System.out.println(WRITER.ordinal() + " " + WRITER + " menu");
+            System.out.println(POST.ordinal() + " " + POST + " menu");
+            System.out.println(LABEL.ordinal() + " " + LABEL + " menu");
             try {
                 selectedMenu = scanner.nextInt();
                 if (selectedMenu < 0 || selectedMenu > Repository.values().length) {
                     throw new IllegalAccessException();
                 }
-
+                scanner.nextLine();
                 switch (Repository.values()[selectedMenu]) {
                     case UNDEFINED -> {
-                        mainMenu(scanner);
+                        continue;
                     }
                     case WRITER -> {
                         System.out.println(WRITER.name() + " selected");
@@ -99,6 +100,6 @@ public class MainService {
                 System.out.println("Only " + Arrays.stream(Repository.values()).map(Enum::ordinal).toList() + " numbers are allowed");
                 scanner.next();
             }
-        }
+        } while (scanner.hasNext());
     }
 }
