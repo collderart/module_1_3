@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 
-import static edu.crud.constants.MenuActions.EDIT;
 import static edu.crud.constants.Repository.*;
 
 public class MainService {
@@ -66,8 +65,7 @@ public class MainService {
     }
 
     private void mainMenu(Scanner scanner) {
-
-        int selectedMenu;
+        int selectedMenu = 0;
         do {
             System.out.println("Please select what entity you want to work with:");
             System.out.println(WRITER.ordinal() + " " + WRITER + " menu");
@@ -81,7 +79,8 @@ public class MainService {
                 scanner.nextLine();
                 switch (Repository.values()[selectedMenu]) {
                     case UNDEFINED -> {
-                        continue;
+                        System.out.println("exit the program");
+                        return;
                     }
                     case WRITER -> {
                         System.out.println(WRITER.name() + " selected");
@@ -92,14 +91,13 @@ public class MainService {
                         postView.printMenu(scanner);
                     }
                     case LABEL -> {
-                        System.out.println(EDIT.name() + " selected");
+                        System.out.println(LABEL.name() + " selected");
                         labelView.printMenu(scanner);
                     }
                 }
             } catch (Exception e) {
                 System.out.println("Only " + Arrays.stream(Repository.values()).map(Enum::ordinal).toList() + " numbers are allowed");
-                scanner.next();
             }
-        } while (scanner.hasNext());
+        } while (selectedMenu != 0);
     }
 }

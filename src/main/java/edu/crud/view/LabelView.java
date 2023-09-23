@@ -17,7 +17,6 @@ public class LabelView implements CommonView<LabelEntity> {
 
     @Override
     public void printMenu(Scanner scanner) throws Exception {
-
         int selectedMenu;
         do {
             System.out.println("Select action:");
@@ -34,6 +33,7 @@ public class LabelView implements CommonView<LabelEntity> {
             switch (MenuActions.values()[selectedMenu]) {
 
                 case UNDEFINED -> {
+                    System.out.println("Back to main menu...\n");
                     return;
                 }
                 case CREATE -> {
@@ -43,8 +43,6 @@ public class LabelView implements CommonView<LabelEntity> {
                     labelName = scanner.nextLine();
                     LabelEntity label = labelController.createLabel(labelName);
                     System.out.println("Label created\n" + label);
-
-                    return;
                 }
                 case GET -> {
                     System.out.println(GET.name() + " selected");
@@ -56,7 +54,6 @@ public class LabelView implements CommonView<LabelEntity> {
                     System.out.println(DELETE.name() + " selected");
                 }
             }
-        } while (scanner.hasNext());
-
+        } while (selectedMenu != 0);
     }
 }
