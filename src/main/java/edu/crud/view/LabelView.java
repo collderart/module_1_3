@@ -4,7 +4,10 @@ import edu.crud.constants.MenuActions;
 import edu.crud.controller.LabelController;
 import edu.crud.model.LabelEntity;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import static edu.crud.constants.MenuActions.*;
 
@@ -45,7 +48,19 @@ public class LabelView implements CommonView<LabelEntity> {
                     System.out.println("Label created\n" + label);
                 }
                 case GET -> {
+                    String param;
                     System.out.println(GET.name() + " selected");
+                    System.out.println("To get all labels enter All");
+                    System.out.println("To get label by id enter id of label");
+
+                    param = scanner.next(Pattern.compile("All|\\d*", Pattern.CASE_INSENSITIVE));
+                    if ("all".equalsIgnoreCase(param)) {
+                        List<LabelEntity> all = labelController.getAll();
+                        all.forEach(System.out::println);
+                    } else {
+                        Optional<LabelEntity> byId = labelController.findById(Integer.parseInt(param));
+                        byId.ifPresentOrElse(System.out::println, () -> System.out.println("id " + param + " Not Found"));
+                    }
                 }
                 case EDIT -> {
                     System.out.println(EDIT.name() + " selected");
