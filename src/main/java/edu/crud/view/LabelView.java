@@ -1,6 +1,7 @@
 package edu.crud.view;
 
 import edu.crud.constants.MenuActions;
+import edu.crud.constants.PostStatus;
 import edu.crud.controller.LabelController;
 import edu.crud.model.LabelEntity;
 
@@ -64,6 +65,18 @@ public class LabelView implements CommonView<LabelEntity> {
                 }
                 case EDIT -> {
                     System.out.println(EDIT.name() + " selected");
+                    System.out.print("enter id of entity to edit: ");
+                    long id = scanner.nextInt();
+                    if(labelController.findById(id).isEmpty()) {
+                        System.out.println("entity not found");
+                        return;
+                    }
+                    System.out.print("new label name: ");
+                    String name = scanner.next();
+                    System.out.print("new label status (Active or Under Review): ");
+                    String status = scanner.next(Pattern.compile("Active|Under Review", Pattern.CASE_INSENSITIVE));
+                    labelController.update(new LabelEntity(id, name, PostStatus.valueOf(status.replace(" ", "_").toUpperCase())));
+                    System.out.println("Label successfully updated");
                 }
                 case DELETE -> {
                     System.out.println(DELETE.name() + " selected");

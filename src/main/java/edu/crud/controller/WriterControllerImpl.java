@@ -18,39 +18,6 @@ public class WriterControllerImpl implements CommonController {
     public WriterControllerImpl(WriterRepository writerRepository) {
         this.writerRepository = writerRepository;
     }
-
-//    public static CommonController getInstance(Scanner scanner) throws Exception {
-//        Properties properties = new Properties();
-//        properties.load(new FileInputStream("project.properties"));
-//        File dir = new File(String.valueOf(properties.get("path.to.json.files")));
-//        System.out.println(dir.mkdirs() ? "Created new directory for storage: " + dir.getAbsolutePath() :
-//                "Directory already created for storage: " + dir.getAbsolutePath());
-//        Map<RepoType, File> storageFiles = Map.of(
-//                POST, new File(dir.getAbsolutePath() + "/posts.json"),
-//                WRITER, new File(dir.getAbsolutePath() + "/writers.json"),
-//                LABEL, new File(dir.getAbsolutePath() + "/labels.json"));
-//        storageFiles.values().forEach(file -> {
-//            if (!file.exists()) {
-//                try {
-//                    System.out.println(file.createNewFile() ? "Created new file for storage: " + file.getName() :
-//                            "File already created for storage: " + dir.getName());
-//                } catch (IOException e) {
-//                    System.out.println("Cannot create file for storage. Check your path in properties file");
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        });
-//
-//        return new WriterControllerImpl(scanner,
-//                new GsonWriterRepositoryImpl(storageFiles.get(WRITER).getAbsolutePath(), new GsonBuilder().setPrettyPrinting().create()));
-//    }
-
-//    @Override
-//    public void run() {
-//        Scanner scanner = new Scanner(System.in);
-//        mainMenu(scanner);
-//    }
-
     private void mainMenu(Scanner scanner) {
 
         System.out.println("Please number:");

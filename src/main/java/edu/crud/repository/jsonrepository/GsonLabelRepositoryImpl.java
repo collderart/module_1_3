@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import edu.crud.model.LabelEntity;
 import edu.crud.repository.LabelRepository;
+import edu.crud.repository.ex.EntityNotFoundException;
 
 import javax.annotation.Nonnull;
 import java.io.FileReader;
@@ -24,8 +25,8 @@ public class GsonLabelRepositoryImpl implements LabelRepository {
     }
 
     @Override
-    public LabelEntity getById(@Nonnull Long aLong) {
-        return null;
+    public LabelEntity getById(@Nonnull Long id) {
+        return getAll().stream().filter(entity -> entity.id()==id).findFirst().orElseThrow(() -> new EntityNotFoundException(id));
     }
 
     @Override
@@ -59,11 +60,29 @@ public class GsonLabelRepositoryImpl implements LabelRepository {
 
     @Override
     public LabelEntity update(@Nonnull LabelEntity labelEntity) {
-        return null;
+        List<LabelEntity> all = getAll();
+        LabelEntity founded = all.stream().filter(entity -> entity.id() == labelEntity.id()).findFirst().orElseThrow(() -> new EntityNotFoundException(labelEntity.id()));
+        founded = labelEntity;
+        try (Writer writer = new FileWriter(JSON_REPO, false)) {
+            gson.toJson(all, writer);
+        } catch (Exception e) {
+            System.out.println("Cannot save writer entity " + e.getMessage());
+        }
+        return labelEntity;
     }
 
     @Override
-    public void deleteById(@Nonnull Long aLong) {
+    public void deleteById(@Nonnull Long id) {
+        List<LabelEntity> all = getAll();
+        List<LabelEntity> filtered = all.stream().filter(entity -> entity.id() != id).toList();
+        if (all.size() == filtered.size()) {
+            throw new EntityNotFoundException(id);
+        }
+        try (Writer writer = new FileWriter(JSON_REPO, false)) {
+            gson.toJson(filtered, writer);
+        } catch (Exception e) {
+            System.out.println("Cannot save writer entity " + e.getMessage());
+        }
 
     }
 }

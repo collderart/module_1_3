@@ -35,4 +35,14 @@ public class LabelControllerImpl implements LabelController {
         Map<Long, LabelEntity> map = labelRepository.getAll().stream().collect(Collectors.toMap(LabelEntity::id, Function.identity()));
         return Optional.ofNullable(map.get(id));
     }
+
+    @Override
+    public void update(LabelEntity entityToUpdate) {
+        labelRepository.update(entityToUpdate);
+    }
+
+    @Override
+    public void remove(long id) {
+        labelRepository.deleteById(id);
+    }
 }
