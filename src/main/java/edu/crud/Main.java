@@ -1,9 +1,9 @@
 package edu.crud;
 
-import edu.crud.service.MainService;
+import edu.crud.view.MainView;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        MainService.getInstance().run();
+        MainView.getInstance().run();
     }
 }

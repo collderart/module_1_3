@@ -13,7 +13,7 @@ public record PostEntity(
         LocalDateTime updated,
         List<LabelEntity> labels,
         PostStatus status
-) implements Serializable {
+)  {
     PostEntity withId(long id) {
         return new PostEntity(id, this.content, this.created, this.updated, this.labels, this.status);
     }

@@ -1,6 +1,5 @@
 package edu.crud.controller;
 
-import edu.crud.constants.PostStatus;
 import edu.crud.model.LabelEntity;
 
 import java.util.List;
@@ -12,6 +11,8 @@ public interface LabelController extends CommonController {
     List<LabelEntity> getAll();
 
     Optional<LabelEntity> findById(long id);
+
     void update(LabelEntity entityToUpdate);
+
     void remove(long id);
 }

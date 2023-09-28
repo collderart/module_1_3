@@ -1,18 +1,15 @@
 package edu.crud.repository.jsonrepository;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import edu.crud.ex.EntityNotFoundException;
 import edu.crud.model.LabelEntity;
 import edu.crud.repository.LabelRepository;
-import edu.crud.repository.ex.EntityNotFoundException;
 
 import javax.annotation.Nonnull;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Writer;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
+
+import static edu.crud.util.RepoUtil.getAllFromJson;
+import static edu.crud.util.RepoUtil.writeToJson;
 
 public class GsonLabelRepositoryImpl implements LabelRepository {
 
@@ -24,65 +21,51 @@ public class GsonLabelRepositoryImpl implements LabelRepository {
         this.gson = gson;
     }
 
+    private List<LabelEntity> getAllLabels() {
+        return getAllFromJson(JSON_REPO, gson, LabelEntity.class);
+    }
+
+
     @Override
     public LabelEntity getById(@Nonnull Long id) {
-        return getAll().stream().filter(entity -> entity.id()==id).findFirst().orElseThrow(() -> new EntityNotFoundException(id));
+        return getAllLabels().stream()
+                .filter(entity -> entity.id() == id).findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(id));
     }
 
     @Override
     public List<LabelEntity> getAll() {
-        List<LabelEntity> entities = null;
-        try (FileReader reader = new FileReader(JSON_REPO)) {
-            Type dtoListType = new TypeToken<List<LabelEntity>>() {
-            }.getType();
-            entities = gson.fromJson(reader, dtoListType);
-            if (entities == null) {
-                entities = new ArrayList<>();
-            }
-        } catch (Exception e) {
-            System.out.println("Cannot get all labels ");
-            System.out.println(e.getMessage());
-        }
-        return entities;
+        return getAllLabels();
     }
 
     @Override
     public LabelEntity save(@Nonnull LabelEntity labelEntity) {
-        List<LabelEntity> entities = getAll();
-        try (Writer writer = new FileWriter(JSON_REPO, false)) {
-            entities.add(labelEntity);
-            gson.toJson(entities, writer);
-        } catch (Exception e) {
-            System.out.println("Cannot save writer entity " + e.getMessage());
-        }
+        List<LabelEntity> existing = getAllLabels();
+        existing.add(labelEntity);
+        writeToJson(existing, JSON_REPO, gson);
         return labelEntity;
     }
 
     @Override
     public LabelEntity update(@Nonnull LabelEntity labelEntity) {
-        List<LabelEntity> all = getAll();
-        LabelEntity founded = all.stream().filter(entity -> entity.id() == labelEntity.id()).findFirst().orElseThrow(() -> new EntityNotFoundException(labelEntity.id()));
-        founded = labelEntity;
-        try (Writer writer = new FileWriter(JSON_REPO, false)) {
-            gson.toJson(all, writer);
-        } catch (Exception e) {
-            System.out.println("Cannot save writer entity " + e.getMessage());
-        }
+        List<LabelEntity> updated = getAllLabels()
+                .stream().map(existing -> {
+                    if (existing.id() == labelEntity.id()) {
+                        return labelEntity;
+                    }
+                    return existing;
+                }).toList();
+        writeToJson(updated, JSON_REPO, gson);
         return labelEntity;
     }
 
     @Override
     public void deleteById(@Nonnull Long id) {
         List<LabelEntity> all = getAll();
-        List<LabelEntity> filtered = all.stream().filter(entity -> entity.id() != id).toList();
-        if (all.size() == filtered.size()) {
+        List<LabelEntity> updated = all.stream().filter(entity -> entity.id() != id).toList();
+        if (all.size() == updated.size()) {
             throw new EntityNotFoundException(id);
         }
-        try (Writer writer = new FileWriter(JSON_REPO, false)) {
-            gson.toJson(filtered, writer);
-        } catch (Exception e) {
-            System.out.println("Cannot save writer entity " + e.getMessage());
-        }
-
+        writeToJson(updated, JSON_REPO, gson);
     }
 }

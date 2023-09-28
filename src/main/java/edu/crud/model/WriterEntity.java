@@ -11,5 +11,5 @@ public record WriterEntity(
         String lastName,
         List<PostEntity> posts,
         PostStatus status
-) implements Serializable {
+)  {
 }

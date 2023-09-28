@@ -1,4 +1,4 @@
-package edu.crud.repository.ex;
+package edu.crud.ex;
 
 public class EntityNotFoundException extends RuntimeException{
     public EntityNotFoundException(long id) {

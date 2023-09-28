@@ -1,11 +1,7 @@
-package edu.crud.service;
+package edu.crud.view;
 
 import edu.crud.constants.Repository;
 import edu.crud.controller.CommonController;
-import edu.crud.view.CommonView;
-import edu.crud.view.LabelView;
-import edu.crud.view.PostView;
-import edu.crud.view.WriterView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,21 +13,21 @@ import java.util.Scanner;
 
 import static edu.crud.constants.Repository.*;
 
-public class MainService {
+public class MainView {
     private final CommonView labelView;
     private final CommonView postView;
     private final CommonView writerView;
     private final Scanner scanner;
     static Map<Repository, File> storageFiles;
 
-    public MainService(CommonView labelView, CommonView postView, CommonView writerView, Scanner scanner) {
+    public MainView(CommonView labelView, CommonView postView, CommonView writerView, Scanner scanner) {
         this.labelView = labelView;
         this.postView = postView;
         this.writerView = writerView;
         this.scanner = scanner;
     }
 
-    public static MainService getInstance() throws Exception {
+    public static MainView getInstance() throws Exception {
         Properties properties = new Properties();
         properties.load(new FileInputStream("project.properties"));
         File dir = new File(String.valueOf(properties.get("path.to.json.files")));
@@ -53,7 +49,7 @@ public class MainService {
             }
         });
         Scanner scanner = new Scanner(System.in);
-        return new MainService(
+        return new MainView(
                 new LabelView(CommonController.getInstance(LABEL, storageFiles.get(LABEL))),
                 new PostView(CommonController.getInstance(POST, storageFiles.get(POST))),
                 new WriterView(CommonController.getInstance(WRITER, storageFiles.get(WRITER))),

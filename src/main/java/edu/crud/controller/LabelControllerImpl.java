@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static edu.crud.util.RepoUtil.generateNextId;
+
 public class LabelControllerImpl implements LabelController {
     private final LabelRepository labelRepository;
 
@@ -20,9 +22,8 @@ public class LabelControllerImpl implements LabelController {
 
     @Override
     public LabelEntity createLabel(@Nonnull String name) {
-        List<LabelEntity> all = labelRepository.getAll();
-        long lastId = all.isEmpty() ? 0 : all.get(all.size() - 1).id();
-        return labelRepository.save(new LabelEntity(++lastId, name, PostStatus.ACTIVE));
+        Long nextId = generateNextId(labelRepository.getAll().stream().map(LabelEntity::id).toList());
+        return labelRepository.save(new LabelEntity(nextId, name, PostStatus.ACTIVE));
     }
 
     @Override
