@@ -2,6 +2,7 @@ package edu.crud.util;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import edu.crud.model.ModelEntity;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -34,7 +35,7 @@ public class RepoUtil {
         }
     }
 
-    public static Long generateNextId(List<Long> labels) {
-        return labels.stream().max(Long::compare).orElse(0L) + 1;
+    public static <T extends ModelEntity> Long generateNextId(List<T> labels) {
+        return labels.stream().mapToLong(ModelEntity::id).max().orElse(0L) + 1;
     }
 }

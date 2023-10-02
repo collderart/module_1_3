@@ -22,7 +22,7 @@ public class LabelControllerImpl implements LabelController {
 
     @Override
     public LabelEntity createLabel(@Nonnull String name) {
-        Long nextId = generateNextId(labelRepository.getAll().stream().map(LabelEntity::id).toList());
+        Long nextId = generateNextId(labelRepository.getAll());
         return labelRepository.save(new LabelEntity(nextId, name, PostStatus.ACTIVE));
     }
 

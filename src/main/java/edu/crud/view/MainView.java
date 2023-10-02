@@ -2,14 +2,14 @@ package edu.crud.view;
 
 import edu.crud.constants.Repository;
 import edu.crud.controller.CommonController;
+import edu.crud.ex.EntityNotFoundException;
+import edu.crud.ex.InvalidParamException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static edu.crud.constants.Repository.*;
 
@@ -48,7 +48,7 @@ public class MainView {
                 }
             }
         });
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in).useDelimiter("\\n");
         return new MainView(
                 new LabelView(CommonController.getInstance(LABEL, storageFiles.get(LABEL))),
                 new PostView(CommonController.getInstance(POST, storageFiles.get(POST))),
@@ -70,7 +70,7 @@ public class MainView {
             try {
                 selectedMenu = scanner.nextInt();
                 if (selectedMenu < 0 || selectedMenu > Repository.values().length) {
-                    throw new IllegalAccessException();
+                    throw new InvalidParamException(Arrays.stream(Repository.values()).map(Enum::ordinal).map(String::valueOf).collect(Collectors.joining(", ")));
                 }
                 scanner.nextLine();
                 switch (Repository.values()[selectedMenu]) {
@@ -91,8 +91,13 @@ public class MainView {
                         labelView.printMenu(scanner);
                     }
                 }
-            } catch (Exception e) {
+            } catch (InputMismatchException e) {
+                // nextLine to prevent recursion when exception thrown
+                scanner.nextLine();
                 System.out.println("Only " + Arrays.stream(Repository.values()).map(Enum::ordinal).toList() + " numbers are allowed");
+            } catch (InvalidParamException | EntityNotFoundException e) {
+                scanner.nextLine();
+                System.out.println(e.getMessage());
             }
         } while (selectedMenu != 0);
     }

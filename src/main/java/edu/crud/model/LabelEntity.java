@@ -6,7 +6,7 @@ public record LabelEntity(
         long id,
         String name,
         PostStatus status
-)  {
+) implements ModelEntity {
     @Override
     public String toString() {
         return
