@@ -1,6 +1,7 @@
 package edu.crud.repository.jsonrepository;
 
 import com.google.gson.Gson;
+import edu.crud.constants.PostStatus;
 import edu.crud.ex.EntityNotFoundException;
 import edu.crud.model.LabelEntity;
 import edu.crud.repository.LabelRepository;
@@ -35,7 +36,9 @@ public class GsonLabelRepositoryImpl implements LabelRepository {
 
     @Override
     public List<LabelEntity> getAll() {
-        return getAllLabels();
+        return getAllLabels().stream()
+                .filter(entity -> entity.status() != PostStatus.DELETED)
+                .toList();
     }
 
     @Override
@@ -61,11 +64,14 @@ public class GsonLabelRepositoryImpl implements LabelRepository {
 
     @Override
     public void deleteById(@Nonnull Long id) {
-        List<LabelEntity> all = getAll();
-        List<LabelEntity> updated = all.stream().filter(entity -> entity.id() != id).toList();
-        if (all.size() == updated.size()) {
-            throw new EntityNotFoundException(id);
-        }
+        List<LabelEntity> updated = getAllLabels()
+                .stream().map(existing -> {
+                    if (existing.id() == id) {
+                        return new LabelEntity(existing.id(), existing.name(), PostStatus.DELETED);
+                    }
+                    return existing;
+                }).toList();
+
         writeToJson(updated, JSON_REPO, gson);
     }
 }

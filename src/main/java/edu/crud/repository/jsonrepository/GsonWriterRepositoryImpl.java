@@ -1,17 +1,18 @@
 package edu.crud.repository.jsonrepository;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import edu.crud.constants.PostStatus;
+import edu.crud.ex.EntityNotFoundException;
 import edu.crud.model.WriterEntity;
 import edu.crud.repository.WriterRepository;
 import edu.crud.util.LocalDateTimeAdapter;
 
 import javax.annotation.Nonnull;
-import java.io.*;
-import java.lang.reflect.Type;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+
+import static edu.crud.util.RepoUtil.getAllFromJson;
+import static edu.crud.util.RepoUtil.writeToJson;
 
 public class GsonWriterRepositoryImpl implements WriterRepository {
     private final String JSON_REPO;
@@ -22,54 +23,55 @@ public class GsonWriterRepositoryImpl implements WriterRepository {
         this.gson = gson.newBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
     }
 
+    private List<WriterEntity> getAllWriters() {
+        return getAllFromJson(JSON_REPO, gson, WriterEntity.class);
+    }
 
     @Override
-    public WriterEntity getById(@Nonnull Long aLong) {
-        try (FileInputStream fin = new FileInputStream(JSON_REPO)) {
-//            fin.read()
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
+    public WriterEntity getById(@Nonnull Long id) {
+        return getAllWriters().stream()
+                .filter(entity -> entity.id() == id).findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(id));
     }
 
     @Override
     public List<WriterEntity> getAll() {
-        List<WriterEntity> entities = null;
-        try (FileReader reader = new FileReader(JSON_REPO)) {
-            Type dtoListType = new TypeToken<List<WriterEntity>>() {
-            }.getType();
-            entities = gson.fromJson(reader, dtoListType);
-            if (entities == null) {
-                entities = new ArrayList<>();
-            };
-        } catch (Exception e) {
-            System.out.println("Cannot save writer entity ");
-            System.out.println(e.getMessage());
-        }
-        return entities;
+        return getAllWriters().stream()
+                .filter(entity -> entity.status() != PostStatus.DELETED)
+                .toList();
     }
 
     @Override
     public WriterEntity save(@Nonnull WriterEntity writerEntity) {
-        try (FileReader reader = new FileReader(JSON_REPO); Writer writer = new FileWriter(JSON_REPO, true)) {
-            List<WriterEntity> entities = getAll();
-            entities.add(writerEntity);
-            gson.toJson(entities, writer);
-        } catch (Exception e) {
-            System.out.println("Cannot save writer entity ");
-            System.out.println(e.getMessage());
-        }
+        List<WriterEntity> existing = getAllWriters();
+        existing.add(writerEntity);
+        writeToJson(existing, JSON_REPO, gson);
         return writerEntity;
     }
 
     @Override
     public WriterEntity update(@Nonnull WriterEntity writerEntity) {
-        return null;
+        List<WriterEntity> updated = getAllWriters()
+                .stream().map(existing -> {
+                    if (existing.id() == writerEntity.id()) {
+                        return writerEntity;
+                    }
+                    return existing;
+                }).toList();
+        writeToJson(updated, JSON_REPO, gson);
+        return writerEntity;
     }
 
     @Override
-    public void deleteById(@Nonnull Long aLong) {
+    public void deleteById(@Nonnull Long id) {
+        List<WriterEntity> updated = getAllWriters()
+                .stream().map(existing -> {
+                    if (existing.id() == id) {
+                        return new WriterEntity(existing.id(), existing.firstName(), existing.lastName(), existing.posts(), PostStatus.DELETED);
+                    }
+                    return existing;
+                }).toList();
 
+        writeToJson(updated, JSON_REPO, gson);
     }
 }

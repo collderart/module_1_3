@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostController extends CommonController {
-    PostEntity createLabel(String content, List<LabelEntity> labels);
+    PostEntity createPost(String content, List<LabelEntity> labels);
 
     List<PostEntity> getAll();
 

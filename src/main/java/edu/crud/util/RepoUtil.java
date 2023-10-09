@@ -11,6 +11,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.crud.constants.MenuActions.*;
+
 public class RepoUtil {
     public static <T> List<T> getAllFromJson(String JSON_REPO, Gson gson, Class<T> type) {
         List<T> entities = null;
@@ -37,5 +39,14 @@ public class RepoUtil {
 
     public static <T extends ModelEntity> Long generateNextId(List<T> labels) {
         return labels.stream().mapToLong(ModelEntity::id).max().orElse(0L) + 1;
+    }
+
+    public static void printSubMenu() {
+        System.out.println("Select action:");
+        System.out.println(CREATE.ordinal() + " - to create");
+        System.out.println(GET.ordinal() + " - to get");
+        System.out.println(EDIT.ordinal() + " - to edit");
+        System.out.println(DELETE.ordinal() + " - to delete");
+        System.out.println(UNDEFINED.ordinal() + " - go back");
     }
 }

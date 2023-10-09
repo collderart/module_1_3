@@ -5,6 +5,7 @@ import edu.crud.constants.PostStatus;
 import edu.crud.controller.LabelController;
 import edu.crud.ex.InvalidParamException;
 import edu.crud.model.LabelEntity;
+import edu.crud.util.RepoUtil;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -23,12 +24,7 @@ public class LabelView implements CommonView<LabelEntity> {
     public void printMenu(Scanner scanner) throws InvalidParamException {
         int selectedMenu;
         do {
-            System.out.println("Select action:");
-            System.out.println(CREATE.ordinal() + " - to create Label");
-            System.out.println(GET.ordinal() + " - to get Label");
-            System.out.println(EDIT.ordinal() + " - to edit Label");
-            System.out.println(DELETE.ordinal() + " - to delete Label");
-            System.out.println(UNDEFINED.ordinal() + " - go back");
+            RepoUtil.printSubMenu();
 
             selectedMenu = scanner.nextInt();
             if (selectedMenu < 0 || selectedMenu > MenuActions.values().length) {
@@ -64,6 +60,7 @@ public class LabelView implements CommonView<LabelEntity> {
                     if ("all".equalsIgnoreCase(param)) {
                         List<LabelEntity> all = labelController.getAll();
                         all.forEach(System.out::println);
+                        System.out.println("TOTAL COUNT " + all.size());
                     } else {
                         Optional<LabelEntity> byId = labelController.findById(Integer.parseInt(param));
                         byId.ifPresentOrElse(System.out::println, () -> System.out.println("id " + param + " Not Found"));

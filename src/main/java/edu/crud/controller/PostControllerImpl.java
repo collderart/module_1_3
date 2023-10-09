@@ -15,7 +15,7 @@ public class PostControllerImpl implements PostController {
     }
 
     @Override
-    public PostEntity createLabel(String content, List<LabelEntity> labels) {
+    public PostEntity createPost(String content, List<LabelEntity> labels) {
         return null;
     }
 
