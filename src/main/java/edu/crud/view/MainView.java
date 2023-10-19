@@ -2,6 +2,9 @@ package edu.crud.view;
 
 import edu.crud.constants.Repository;
 import edu.crud.controller.CommonController;
+import edu.crud.controller.LabelController;
+import edu.crud.controller.PostController;
+import edu.crud.controller.WriterController;
 import edu.crud.ex.EntityNotFoundException;
 import edu.crud.ex.InvalidParamException;
 
@@ -49,10 +52,13 @@ public class MainView {
             }
         });
         Scanner scanner = new Scanner(System.in).useDelimiter("\\n");
+        LabelController label = CommonController.getInstance(LABEL, storageFiles.get(LABEL));
+        PostController post = CommonController.getInstance(POST, storageFiles.get(POST));
+        WriterController writer = CommonController.getInstance(WRITER, storageFiles.get(WRITER));
         return new MainView(
-                new LabelView(CommonController.getInstance(LABEL, storageFiles.get(LABEL))),
-                new PostView(CommonController.getInstance(POST, storageFiles.get(POST))),
-                new WriterView(CommonController.getInstance(WRITER, storageFiles.get(WRITER))),
+                new LabelView(label),
+                new PostView(post, label),
+                new WriterView(writer, post, label),
                 scanner);
     }
 

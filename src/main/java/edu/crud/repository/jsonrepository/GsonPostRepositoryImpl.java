@@ -5,6 +5,7 @@ import edu.crud.constants.PostStatus;
 import edu.crud.ex.EntityNotFoundException;
 import edu.crud.model.PostEntity;
 import edu.crud.repository.PostRepository;
+import edu.crud.util.LocalDateTimeAdapter;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ public class GsonPostRepositoryImpl implements PostRepository {
 
     public GsonPostRepositoryImpl(String jsonFile, Gson gson) {
         JSON_REPO = jsonFile;
-        this.gson = gson;
+        this.gson = gson.newBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
     }
 
     private List<PostEntity> getAllPosts() {

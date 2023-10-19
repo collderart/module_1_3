@@ -5,9 +5,7 @@ import edu.crud.model.LabelEntity;
 import edu.crud.repository.LabelRepository;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -35,6 +33,24 @@ public class LabelControllerImpl implements LabelController {
     public Optional<LabelEntity> findById(long id) {
         Map<Long, LabelEntity> map = labelRepository.getAll().stream().collect(Collectors.toMap(LabelEntity::id, Function.identity()));
         return Optional.ofNullable(map.get(id));
+    }
+
+    @Override
+    public List<LabelEntity> findByNamesOrCreate(String... labelNames) {
+        List<LabelEntity> collected = new ArrayList<>();
+        List<LabelEntity> all = labelRepository.getAll();
+        all.forEach(label -> {
+            if (Arrays.asList(labelNames).contains(label.name())) {
+                collected.add(label);
+            }
+        });
+        Set<String> existingNames = collected.stream().map(LabelEntity::name).collect(Collectors.toSet());
+        for (String name : labelNames) {
+            if (!existingNames.contains(name)) {
+                collected.add(createLabel(name));
+            }
+        }
+        return collected;
     }
 
     @Override

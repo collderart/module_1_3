@@ -2,8 +2,10 @@ package edu.crud.view;
 
 import edu.crud.constants.MenuActions;
 import edu.crud.constants.PostStatus;
+import edu.crud.controller.LabelController;
 import edu.crud.controller.PostController;
 import edu.crud.ex.InvalidParamException;
+import edu.crud.model.LabelEntity;
 import edu.crud.model.PostEntity;
 import edu.crud.util.RepoUtil;
 
@@ -16,9 +18,11 @@ import static edu.crud.constants.MenuActions.*;
 
 public class PostView implements CommonView<PostEntity> {
     private final PostController postController;
+    private final LabelController labelController;
 
-    public PostView(PostController controller) {
-        this.postController = controller;
+    public PostView(PostController post, LabelController label) {
+        this.postController = post;
+        this.labelController = label;
     }
 
     @Override
@@ -41,10 +45,19 @@ public class PostView implements CommonView<PostEntity> {
                 case CREATE -> {
                     String postContent;
                     System.out.println(CREATE.name() + " selected");
-                    System.out.print("Name of Label: ");
+                    System.out.print("Content of Post: ");
                     postContent = scanner.nextLine();
-                    PostEntity label = postController.createPost(postContent, List.of());
-                    System.out.println("Label created\n" + label);
+                    System.out.println("Do you want to add some labels?");
+                    System.out.print("y/n: ");
+                    String yn = scanner.nextLine().trim().toLowerCase();
+                    List<LabelEntity> labels = new ArrayList<>();
+                    if (yn.equals("y")) {
+                        System.out.print("Add labels with semicolon: ");
+                        String labelNames = scanner.nextLine();
+                        labels.addAll(labelController.findByNamesOrCreate(labelNames.split(",")));
+                    }
+                    PostEntity label = postController.createPost(postContent, labels);
+                    System.out.println("Post created\n" + label);
                 }
                 case GET -> {
                     String param;
@@ -76,9 +89,13 @@ public class PostView implements CommonView<PostEntity> {
                         System.out.println("ENTITY NOT FOUND");
                         return;
                     }
-                    System.out.print("new label content: ");
+                    System.out.print("new post content: ");
                     scanner.nextLine();
                     String content = scanner.nextLine();
+                    System.out.print("new Labels (add names separated by commas): ");
+                    scanner.nextLine();
+                    String labelNames = scanner.nextLine();
+                    List<LabelEntity> labels = labelController.findByNamesOrCreate(labelNames.split(","));
                     System.out.print("new label status (Active or Under Review): ");
                     String status;
                     try {

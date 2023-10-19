@@ -3,16 +3,9 @@ package edu.crud.controller;
 import edu.crud.model.LabelEntity;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface LabelController extends CommonController {
+public interface LabelController extends CommonController<LabelEntity> {
     LabelEntity createLabel(String name);
 
-    List<LabelEntity> getAll();
-
-    Optional<LabelEntity> findById(long id);
-
-    void update(LabelEntity entityToUpdate);
-
-    void remove(long id);
+    List<LabelEntity> findByNamesOrCreate(String... labelNames);
 }

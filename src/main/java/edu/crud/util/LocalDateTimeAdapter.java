@@ -9,11 +9,11 @@ import java.time.format.DateTimeFormatter;
 public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
     @Override
     public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        return LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
+        return LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     @Override
     public JsonElement serialize(LocalDateTime src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        return new JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
     }
 }
