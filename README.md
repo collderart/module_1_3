@@ -12,7 +12,9 @@ You can add, delete or edit each entity (Writer, Post, Label). Also, you can get
 **Structure**
 
 **Writer** - has name, surname, status and can have list of Posts.
+
 **Post** - has content, date created, date updated, status and can have list of Labels.
+
 **Label** - has name and status.
 
 **Menu**
