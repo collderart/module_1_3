@@ -13,8 +13,4 @@ public record PostEntity(
         List<LabelEntity> labels,
         PostStatus status
 ) implements ModelEntity {
-    PostEntity withId(long id) {
-        return new PostEntity(id, this.content, this.created, this.updated, this.labels, this.status);
-    }
-
 }
