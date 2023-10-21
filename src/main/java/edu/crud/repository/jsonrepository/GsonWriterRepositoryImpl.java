@@ -35,10 +35,15 @@ public class GsonWriterRepositoryImpl implements WriterRepository {
     }
 
     @Override
-    public List<WriterEntity> getAll() {
+    public List<WriterEntity> getAllActive() {
         return getAllWriters().stream()
                 .filter(entity -> entity.status() != PostStatus.DELETED)
                 .toList();
+    }
+
+    @Override
+    public List<WriterEntity> getAll() {
+        return getAllWriters();
     }
 
     @Override

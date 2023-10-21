@@ -3,12 +3,11 @@ package edu.crud.controller;
 import edu.crud.constants.PostStatus;
 import edu.crud.model.LabelEntity;
 import edu.crud.model.PostEntity;
+import edu.crud.repository.GenericRepository;
 import edu.crud.repository.PostRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -23,28 +22,29 @@ public class PostControllerImpl implements PostController {
 
     @Override
     public PostEntity createPost(String content, List<LabelEntity> labels) {
-        Long nextId = generateNextId(postRepository.getAll());
+        Long nextId = generateNextId(postRepository.getAllActive());
         return postRepository.save(new PostEntity(nextId, content, LocalDateTime.now(), LocalDateTime.now(), labels, PostStatus.ACTIVE));
     }
 
     @Override
-    public List<PostEntity> getAll() {
-        return postRepository.getAll();
-    }
-
-    @Override
     public Optional<PostEntity> findById(long id) {
-        Map<Long, PostEntity> map = postRepository.getAll().stream().collect(Collectors.toMap(PostEntity::id, Function.identity()));
+        Map<Long, PostEntity> map = postRepository.getAllActive().stream().collect(Collectors.toMap(PostEntity::id, Function.identity()));
         return Optional.ofNullable(map.get(id));
     }
 
     @Override
-    public void update(PostEntity entityToUpdate) {
-        postRepository.update(entityToUpdate);
+    public List<PostEntity> findByIds(Set<Long> ids) {
+        List<PostEntity> result = new ArrayList<>();
+        postRepository.getAllActive().forEach(entity -> {
+            if (ids.contains(entity.id())) {
+                result.add(entity);
+            }
+        });
+        return result;
     }
 
     @Override
-    public void remove(long id) {
-        postRepository.deleteById(id);
+    public GenericRepository<PostEntity, Long> getRepository() {
+        return postRepository;
     }
 }

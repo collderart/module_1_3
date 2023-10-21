@@ -58,7 +58,7 @@ public class MainView {
         return new MainView(
                 new LabelView(label),
                 new PostView(post, label),
-                new WriterView(writer, post, label),
+                new WriterView(writer, post),
                 scanner);
     }
 

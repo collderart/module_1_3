@@ -2,6 +2,7 @@ package edu.crud.controller;
 
 import edu.crud.constants.PostStatus;
 import edu.crud.model.LabelEntity;
+import edu.crud.repository.GenericRepository;
 import edu.crud.repository.LabelRepository;
 
 import javax.annotation.Nonnull;
@@ -20,27 +21,23 @@ public class LabelControllerImpl implements LabelController {
 
     @Override
     public LabelEntity createLabel(@Nonnull String name) {
-        Long nextId = generateNextId(labelRepository.getAll());
+        Long nextId = generateNextId(labelRepository.getAllActive());
         return labelRepository.save(new LabelEntity(nextId, name, PostStatus.ACTIVE));
     }
 
     @Override
-    public List<LabelEntity> getAll() {
-        return labelRepository.getAll();
-    }
-
-    @Override
     public Optional<LabelEntity> findById(long id) {
-        Map<Long, LabelEntity> map = labelRepository.getAll().stream().collect(Collectors.toMap(LabelEntity::id, Function.identity()));
+        Map<Long, LabelEntity> map = labelRepository.getAllActive().stream().collect(Collectors.toMap(LabelEntity::id, Function.identity()));
         return Optional.ofNullable(map.get(id));
     }
 
     @Override
     public List<LabelEntity> findByNamesOrCreate(String... labelNames) {
         List<LabelEntity> collected = new ArrayList<>();
-        List<LabelEntity> all = labelRepository.getAll();
+        List<LabelEntity> all = labelRepository.getAllActive();
+        Set<String> labels = new HashSet<>(Arrays.asList(labelNames));
         all.forEach(label -> {
-            if (Arrays.asList(labelNames).contains(label.name())) {
+            if (labels.contains(label.name())) {
                 collected.add(label);
             }
         });
@@ -54,12 +51,7 @@ public class LabelControllerImpl implements LabelController {
     }
 
     @Override
-    public void update(LabelEntity entityToUpdate) {
-        labelRepository.update(entityToUpdate);
-    }
-
-    @Override
-    public void remove(long id) {
-        labelRepository.deleteById(id);
+    public GenericRepository<LabelEntity, Long> getRepository() {
+        return labelRepository;
     }
 }

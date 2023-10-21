@@ -35,10 +35,15 @@ public class GsonPostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public List<PostEntity> getAll() {
+    public List<PostEntity> getAllActive() {
         return getAllPosts().stream()
                 .filter(entity -> entity.status() != PostStatus.DELETED)
                 .toList();
+    }
+
+    @Override
+    public List<PostEntity> getAll() {
+        return getAllPosts();
     }
 
     @Override

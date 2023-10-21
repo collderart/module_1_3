@@ -2,6 +2,7 @@ package edu.crud.controller;
 
 import com.google.gson.GsonBuilder;
 import edu.crud.constants.Repository;
+import edu.crud.repository.GenericRepository;
 import edu.crud.repository.jsonrepository.GsonLabelRepositoryImpl;
 import edu.crud.repository.jsonrepository.GsonPostRepositoryImpl;
 import edu.crud.repository.jsonrepository.GsonWriterRepositoryImpl;
@@ -27,11 +28,19 @@ public interface CommonController<T> {
         }
     }
 
-    List<T> getAll();
+    default List<T> getAll() {
+        return getRepository().getAllActive();
+    }
 
     Optional<T> findById(long id);
 
-    void update(T entityToUpdate);
+    default void update(T entityToUpdate) {
+        getRepository().update(entityToUpdate);
+    }
 
-    void remove(long id);
+    default void remove(long id) {
+        getRepository().deleteById(id);
+    }
+
+    GenericRepository<T, Long> getRepository();
 }

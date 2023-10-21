@@ -35,10 +35,15 @@ public class GsonLabelRepositoryImpl implements LabelRepository {
     }
 
     @Override
-    public List<LabelEntity> getAll() {
+    public List<LabelEntity> getAllActive() {
         return getAllLabels().stream()
                 .filter(entity -> entity.status() != PostStatus.DELETED)
                 .toList();
+    }
+
+    @Override
+    public List<LabelEntity> getAll() {
+        return getAllLabels();
     }
 
     @Override
