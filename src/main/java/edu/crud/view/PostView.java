@@ -52,7 +52,7 @@ public class PostView implements CommonView<PostEntity> {
                     String yn = scanner.nextLine().trim().toLowerCase();
                     List<LabelEntity> labels = new ArrayList<>();
                     if (yn.equals("y")) {
-                        System.out.print("Add labels with semicolon: ");
+                        System.out.print("Add labels separated by commas: ");
                         String labelNames = scanner.nextLine();
                         labels.addAll(labelController.findByNamesOrCreate(labelNames.split(",")));
                     }
@@ -92,11 +92,18 @@ public class PostView implements CommonView<PostEntity> {
                     System.out.print("new post content: ");
                     scanner.nextLine();
                     String content = scanner.nextLine();
-                    System.out.print("new Labels (add names separated by commas): ");
-                    scanner.nextLine();
-                    String labelNames = scanner.nextLine();
-                    List<LabelEntity> labels = labelController.findByNamesOrCreate(labelNames.split(","));
-                    System.out.print("new label status (Active or Under Review): ");
+
+                    System.out.println("Do you want to edit labels?");
+                    System.out.print("y/n: ");
+                    String yn = scanner.nextLine().trim().toLowerCase();
+                    List<LabelEntity> labels = new ArrayList<>();
+                    if (yn.equals("y")) {
+                        System.out.print("Add labels with semicolon: ");
+                        String labelNames = scanner.nextLine();
+                        labels.addAll(labelController.findByNamesOrCreate(labelNames.split(",")));
+                    }
+
+                    System.out.print("new post status (Active or Under Review): ");
                     String status;
                     try {
                         status = scanner.next(Pattern.compile("Active|Under Review", Pattern.CASE_INSENSITIVE));
@@ -104,7 +111,9 @@ public class PostView implements CommonView<PostEntity> {
                         throw new InvalidParamException("Active or Under Review");
                     }
 
-                    postController.update(new PostEntity(id, content, byId.get().created(), LocalDateTime.now(), List.of(), PostStatus.valueOf(status.replace(" ", "_").toUpperCase())));
+                    postController.update(new PostEntity(id, content, byId.get().created(), LocalDateTime.now(),
+                            labels.isEmpty() ? byId.get().labels() : labels,
+                            PostStatus.valueOf(status.replace(" ", "_").toUpperCase())));
                     System.out.println("Label successfully updated");
                 }
                 case DELETE -> {
